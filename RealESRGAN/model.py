@@ -32,13 +32,13 @@ HF_MODELS = {
 
 
 class RealESRGAN:
-    def __init__(self, device, scale=4):
+    def __init__(self, device, anime = False, scale=4):
         self.device = device
         self.scale = scale
-        self.model = RRDBNet(
-            num_in_ch=3, num_out_ch=3, num_feat=64, 
-            num_block=23, num_grow_ch=32, scale=scale
-        )
+        if anime is True:
+            self.model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=6, num_grow_ch=32, scale=scale)
+        else:
+            self.model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=scale)
         
     def load_weights(self, model_path, download=True):
         if not os.path.exists(model_path) and download:
