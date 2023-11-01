@@ -121,7 +121,7 @@ class RealESRGAN:
 
     def face_enchange(img_path, scale = 4):
         from gfpgan import GFPGANer
-        img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+        img = cv2.imread(str(img_path), cv2.IMREAD_UNCHANGED)
         face_enhancer = GFPGANer(
             model_path="https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth",
             upscale=scale,
