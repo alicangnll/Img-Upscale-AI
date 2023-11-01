@@ -1,5 +1,6 @@
 import os
 import torch
+import cv2
 from PIL import Image
 import numpy as np
 from huggingface_hub import hf_hub_url, cached_download
@@ -58,7 +59,7 @@ class RealESRGAN:
         self.model.to(self.device)
         
     @torch.cuda.amp.autocast()
-    def predict(self, lr_image, batch_size=4, patches_size=192, padding=24, pad_size=15, face_enchange = False):
+    def predict(self, lr_image, batch_size=4, patches_size=192, padding=24, pad_size=15):
         scale = self.scale
         device = self.device
         lr_image = np.array(lr_image)
@@ -86,11 +87,11 @@ class RealESRGAN:
         sr_img = (np_sr_image*255).astype(np.uint8)
         sr_img = unpad_image(sr_img, pad_size*scale)
         sr_img = Image.fromarray(sr_img)
-        if face_enchange is True:
-            from gfpgan import GFPGANer
-            face_enhancer = GFPGANer(model_path='https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth', upscale=scale, arch='clean', channel_multiplier=2)
-            output = face_enhancer.enhance(sr_img, has_aligned=False, only_center_face=False, paste_back=True)
-            sr_img = Image.fromarray(output)
-            return sr_img
-        else:
-            return sr_img
+        return sr_img
+    
+    def face_enchange(img_path):
+        from gfpgan import GFPGANer
+        img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+        face_enhancer = GFPGANer(model_path='https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth', upscale=scale, arch='clean', channel_multiplier=2)
+        output = face_enhancer.enhance(img, has_aligned=False, only_center_face=False, paste_back=True)
+        cv2.imwrite("enchange_" + img_path, output)
