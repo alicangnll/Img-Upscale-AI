@@ -85,11 +85,11 @@ class RealESRGAN:
         )
         sr_img = (np_sr_image*255).astype(np.uint8)
         sr_img = unpad_image(sr_img, pad_size*scale)
+        sr_img = Image.fromarray(sr_img)
         if face_enchange is True:
             from gfpgan import GFPGANer
             face_enhancer = GFPGANer(model_path='https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth', upscale=4, arch='clean', channel_multiplier=2)
             output = face_enhancer.enhance(sr_img, has_aligned=False, only_center_face=False, paste_back=True)
             return output
         else:
-            sr_img = Image.fromarray(sr_img)
             return sr_img
