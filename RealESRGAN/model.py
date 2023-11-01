@@ -1,11 +1,8 @@
 import os
 import torch
-from torch.nn import functional as F
 from PIL import Image
 import numpy as np
-import cv2
 from huggingface_hub import hf_hub_url, cached_download
-
 from .rrdbnet_arch import RRDBNet
 from .utils import pad_reflect, split_image_into_overlapping_patches, stich_together, \
                    unpad_image
@@ -61,8 +58,7 @@ class RealESRGAN:
         self.model.to(self.device)
         
     @torch.cuda.amp.autocast()
-    def predict(self, lr_image, batch_size=4, patches_size=192,
-                padding=24, pad_size=15):
+    def predict(self, lr_image, batch_size=4, patches_size=192, padding=24, pad_size=15, face_enchange = False):
         scale = self.scale
         device = self.device
         lr_image = np.array(lr_image)
@@ -89,6 +85,11 @@ class RealESRGAN:
         )
         sr_img = (np_sr_image*255).astype(np.uint8)
         sr_img = unpad_image(sr_img, pad_size*scale)
-        sr_img = Image.fromarray(sr_img)
-
-        return sr_img
+        if face_enchange is True:
+            from gfpgan import GFPGANer
+            face_enhancer = GFPGANer(model_path='https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth', upscale=4, arch='clean', channel_multiplier=2)
+            output = face_enhancer.enhance(sr_img, has_aligned=False, only_center_face=False, paste_back=True)
+            return output
+        else:
+            sr_img = Image.fromarray(sr_img)
+            return sr_img

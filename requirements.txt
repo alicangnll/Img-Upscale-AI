@@ -6,3 +6,6 @@ torchvision
 tqdm
 huggingface-hub
 matplotlib
+basicsr
+facexlib
+gfpgan
