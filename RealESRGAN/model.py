@@ -135,4 +135,5 @@ class RealESRGAN:
             extension = 'png'
         else:
             extension = "png"
-        cv2.imwrite("faceboost_output.{extension}", output)
+        sr_img = Image.fromarray(output)
+        cv2.imwrite("faceboost_output.{extension}", sr_img)
