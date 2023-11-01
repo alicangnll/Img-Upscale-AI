@@ -16,7 +16,6 @@ class DifferencesCalculate:
     ax2.axis('off')
     ax1.imshow(img_input)
     ax2.imshow(img_output)
-    fig.savefig("differences_" + img_output)
   
   def imread(img_path):
     img = cv2.imread(img_path)
