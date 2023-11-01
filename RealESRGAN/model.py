@@ -131,9 +131,5 @@ class RealESRGAN:
         output = face_enhancer.enhance(
             img, has_aligned=False, only_center_face=False, paste_back=True
         )
-        if len(img.shape) == 3 and img.shape[2] == 4:
-            extension = 'png'
-        else:
-            extension = "png"
         sr_img = Image.fromarray(output)
         return sr_img
